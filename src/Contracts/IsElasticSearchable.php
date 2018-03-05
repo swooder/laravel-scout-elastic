@@ -1,6 +1,6 @@
 <?php
 
-namespace ScoutEngines\Elasticsearch\Contracts;
+namespace Woodfish\Elasticsearch\Contracts;
 
 interface IsElasticSearchable
 {
