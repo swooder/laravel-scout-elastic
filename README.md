@@ -45,7 +45,7 @@ $app->register(Woodfish\Elasticsearch\ElasticsearchProvider::class);
 Then you should publish the Elasticsearch configuration using the `vendor:publish` Artisan command.
 
 ```
-php artisan vendor:publish --provider="ScoutEngines\Elasticsearch\ElasticsearchProvider"
+php artisan vendor:publish --provider="Woodfish\Elasticsearch\ElasticsearchProvider"
 ```
 
 ### Setting up Elasticsearch configuration
@@ -67,13 +67,13 @@ You may define custom mappings for Elasticsearch fields in the config. See examp
 If you prefer storing mappings in models, you may create a static public method `mapping()` in each particular model:
 
 ```php
-class Article extends Model
+class Product extends Model
 {
     // ...
     public static function mapping() {
         return [
-            'location' => [
-                'type' => 'geo_point'
+            'title' => [
+                'type' => 'text'
             ],
         ];
     }
@@ -90,12 +90,12 @@ And then use it in the config file:
             "number_of_replicas" => 0,
         ],
         'mappings' => [
-            'articles' => \App\Article::mapping(),
+            'product' => \App\Product::mapping(),
         ],
     ],
  ]
 ```
-The document type, in this example `articles` must match `searchableAs()` for the respective model.
+The document type, in this example `product` must match `searchableAs()` for the respective model.
 
 Elasticsearch can set default types to model fields on the first insert if you do not explicitly define them. 
 However; sometimes the defaults are not what you're looking for, or you need to define additional mapping properties.
@@ -132,8 +132,8 @@ The Scout `search` method used the default query method defined in the config fi
 Sorting with `orderBy()` method:
 
 ```php
-$articles = Article::search($keywords)
-            ->orderBy('id', 'desc')
+$products = Product::search($keywords)
+            ->orderBy('price', 'desc')
             ->get();
 ```
 
@@ -143,7 +143,7 @@ However, to use the extra Elasticsearch features included in this package, use t
 by adding it to your model instead of `Searchable`:
 
 ```php
-class Article extends Model
+class Product extends Model
 {
     // use Searchable;
     use ElasticSearchable;
@@ -156,8 +156,8 @@ The package features:
 1) The `elasticSearch` method, `elasticSearch($method, $query, array $params = null)`:
 
 ```php
-$articles = Article::elasticSearch('multi_match', $q, [
-    'fields' => ['title', 'content', 'tags'],
+$products = Product::elasticSearch('multi_match', $q, [
+    'fields' => ['title', 'image', 'price'],
     'fuzziness' => 'auto',
     'prefix_length' => 2,
     'operator' => 'AND'
